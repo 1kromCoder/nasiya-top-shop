@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  password  String
+  email     String   @unique
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Debtor {
+  id        Int        @id @default(autoincrement())
+  name      String
+  address   String
+  note      String
+  Seller    Seller?    @relation(fields: [sellerId], references: [id])
+  sellerId  Int?
+  Debts     Debts[]
+  Sms       Sms[]
+  Payments  Payments[]
+  Imgs      Image[]
+  Phones    Phone[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Seller {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String
+  balance   Int
+  password  String
+  img       String
+  Debtor    Debtor[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Debts {
+  id        Int        @id @default(autoincrement())
+  date      DateTime
+  time      DateTime
+  period    String
+  amount    BigInt
+  note      String
+  isActive  Boolean
+  Debtor    Debtor?    @relation(fields: [debtorId], references: [id])
+  debtorId  Int?
+  Payments  Payments[]
+  Imgs      Image[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Sms {
+  id        Int      @id @default(autoincrement())
+  text      String
+  date      DateTime
+  sent      Boolean
+  Example   Example? @relation(fields: [exampleId], references: [id])
+  exampleId Int?
+  Debtor    Debtor?  @relation(fields: [debtorId], references: [id])
+  debtorId  Int?
+}
+
+model Example {
+  id   Int    @id @default(autoincrement())
+  text String
+  Sms  Sms[]
+}
+
+model Payments {
+  id        Int      @id @default(autoincrement())
+  amount    BigInt
+  endDate   DateTime
+  Debtor    Debtor?  @relation(fields: [debtorId], references: [id])
+  debtorId  Int?
+  Debts     Debts?   @relation(fields: [debtsId], references: [id])
+  debtsId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Image {
+  id       Int     @id @default(autoincrement())
+  img      String
+  Debts    Debts?  @relation(fields: [debtsId], references: [id])
+  debtsId  Int?
+  Debtor   Debtor? @relation(fields: [debtorId], references: [id])
+  debtorId Int?
+}
+
+model Phone {
+  id       Int     @id @default(autoincrement())
+  phone    String
+  Debtor   Debtor? @relation(fields: [debtorId], references: [id])
+  debtorId Int?
+}
