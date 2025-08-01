@@ -12,6 +12,7 @@ import { ExampleModule } from './example/example.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ImageModule } from './image/image.module';
 import { PhoneModule } from './phone/phone.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PhoneModule } from './phone/phone.module';
     PaymentsModule,
     ImageModule,
     PhoneModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

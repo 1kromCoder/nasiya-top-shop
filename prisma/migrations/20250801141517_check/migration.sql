@@ -43,11 +43,10 @@ CREATE TABLE "public"."Seller" (
 CREATE TABLE "public"."Debts" (
     "id" SERIAL NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "time" TIMESTAMP(3) NOT NULL,
-    "period" TEXT NOT NULL,
-    "amount" BIGINT NOT NULL,
+    "time" TEXT NOT NULL,
+    "period" INTEGER NOT NULL,
+    "amount" INTEGER NOT NULL,
     "note" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
     "debtorId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -78,10 +77,11 @@ CREATE TABLE "public"."Example" (
 -- CreateTable
 CREATE TABLE "public"."Payments" (
     "id" SERIAL NOT NULL,
-    "amount" BIGINT NOT NULL,
+    "amount" INTEGER NOT NULL,
+    "month" INTEGER NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "debtorId" INTEGER,
     "debtsId" INTEGER,
+    "isActive" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -121,9 +121,6 @@ ALTER TABLE "public"."Sms" ADD CONSTRAINT "Sms_exampleId_fkey" FOREIGN KEY ("exa
 
 -- AddForeignKey
 ALTER TABLE "public"."Sms" ADD CONSTRAINT "Sms_debtorId_fkey" FOREIGN KEY ("debtorId") REFERENCES "public"."Debtor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Payments" ADD CONSTRAINT "Payments_debtorId_fkey" FOREIGN KEY ("debtorId") REFERENCES "public"."Debtor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Payments" ADD CONSTRAINT "Payments_debtsId_fkey" FOREIGN KEY ("debtsId") REFERENCES "public"."Debts"("id") ON DELETE SET NULL ON UPDATE CASCADE;

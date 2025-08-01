@@ -24,19 +24,18 @@ model Admin {
 }
 
 model Debtor {
-  id        Int        @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   address   String
   note      String
-  Seller    Seller?    @relation(fields: [sellerId], references: [id])
+  Seller    Seller?  @relation(fields: [sellerId], references: [id])
   sellerId  Int?
   Debts     Debts[]
   Sms       Sms[]
-  Payments  Payments[]
   Imgs      Image[]
   Phones    Phone[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Seller {
@@ -55,12 +54,11 @@ model Seller {
 model Debts {
   id        Int        @id @default(autoincrement())
   date      DateTime
-  time      DateTime
-  period    String
-  amount    BigInt
+  time      String
+  period    Int
+  amount    Int
   note      String
-  isActive  Boolean
-  Debtor    Debtor?    @relation(fields: [debtorId], references: [id])
+  debtor    Debtor?    @relation(fields: [debtorId], references: [id])
   debtorId  Int?
   Payments  Payments[]
   Imgs      Image[]
@@ -73,9 +71,9 @@ model Sms {
   text      String
   date      DateTime
   sent      Boolean
-  Example   Example? @relation(fields: [exampleId], references: [id])
+  example   Example? @relation(fields: [exampleId], references: [id])
   exampleId Int?
-  Debtor    Debtor?  @relation(fields: [debtorId], references: [id])
+  debtor    Debtor?  @relation(fields: [debtorId], references: [id])
   debtorId  Int?
 }
 
@@ -87,12 +85,12 @@ model Example {
 
 model Payments {
   id        Int      @id @default(autoincrement())
-  amount    BigInt
+  amount    Int
+  month     Int?
   endDate   DateTime
-  Debtor    Debtor?  @relation(fields: [debtorId], references: [id])
-  debtorId  Int?
-  Debts     Debts?   @relation(fields: [debtsId], references: [id])
+  debts     Debts?   @relation(fields: [debtsId], references: [id])
   debtsId   Int?
+  isActive  Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -100,15 +98,15 @@ model Payments {
 model Image {
   id       Int     @id @default(autoincrement())
   img      String
-  Debts    Debts?  @relation(fields: [debtsId], references: [id])
+  debts    Debts?  @relation(fields: [debtsId], references: [id])
   debtsId  Int?
-  Debtor   Debtor? @relation(fields: [debtorId], references: [id])
+  debtor   Debtor? @relation(fields: [debtorId], references: [id])
   debtorId Int?
 }
 
 model Phone {
   id       Int     @id @default(autoincrement())
   phone    String
-  Debtor   Debtor? @relation(fields: [debtorId], references: [id])
+  debtor   Debtor? @relation(fields: [debtorId], references: [id])
   debtorId Int?
 }

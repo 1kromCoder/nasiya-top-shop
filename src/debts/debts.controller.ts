@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DebtsService } from './debts.service';
 import { CreateDebtDto } from './dto/create-debt.dto';
 import { UpdateDebtDto } from './dto/update-debt.dto';
@@ -10,6 +19,10 @@ export class DebtsController {
   @Post()
   create(@Body() createDebtDto: CreateDebtDto) {
     return this.debtsService.create(createDebtDto);
+  }
+  @Get('debtor/:id/status')
+  getDebtorDebtStatus(@Param('id', ParseIntPipe) id: number) {
+    return this.debtsService.getDebtorDebtStatus(id);
   }
 
   @Get()
