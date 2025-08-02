@@ -7,6 +7,7 @@ import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 @Injectable()
 export class SellerService {
   constructor(private readonly prisma: PrismaService) {}
@@ -31,10 +32,55 @@ export class SellerService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    balance?: string;
+    sortBy?: 'name' | 'email' | 'balance' | 'createdAt';
+    order?: 'asc' | 'desc';
+    page?: string;
+    limit?: string;
+  }) {
     try {
-      const all = await this.prisma.seller.findMany();
-      return all;
+      const {
+        name,
+        email,
+        phone,
+        balance,
+        sortBy = 'createdAt',
+        order = 'desc',
+        page = '1',
+        limit = '10',
+      } = query;
+
+      const pageNumber = parseInt(page, 10);
+      const limitNumber = parseInt(limit, 10);
+
+      const where: Prisma.SellerWhereInput = {
+        ...(name && { name: { contains: name, mode: 'insensitive' } }),
+        ...(email && { email: { contains: email, mode: 'insensitive' } }),
+        ...(phone && { phone: { contains: phone } }),
+        ...(balance && { balance: Number(balance) }),
+      };
+
+      const [items, total] = await this.prisma.$transaction([
+        this.prisma.seller.findMany({
+          where,
+          orderBy: { [sortBy]: order },
+          skip: (pageNumber - 1) * limitNumber,
+          take: limitNumber,
+        }),
+        this.prisma.seller.count({ where }),
+      ]);
+
+      return {
+        data: items,
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
+      };
     } catch (error) {
       throw new UnauthorizedException(error);
     }
@@ -58,7 +104,13 @@ export class SellerService {
       if (!one) {
         return { message: 'Seller not found' };
       }
-      const edit = await this.prisma.seller.update({ where: { id }, data });
+      if (data.password) {
+        data.password = bcrypt.hashSync(data.password, 10);
+      }
+      const edit = await this.prisma.seller.update({
+        where: { id },
+        data,
+      });
       return edit;
     } catch (error) {
       throw new UnauthorizedException(error);

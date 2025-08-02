@@ -13,9 +13,17 @@ import { PaymentsModule } from './payments/payments.module';
 import { ImageModule } from './image/image.module';
 import { PhoneModule } from './phone/phone.module';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterController } from './multer/multer.module';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/file',
+    }),
     PrismaModule,
     AdminModule,
     DebtsModule,
@@ -27,8 +35,9 @@ import { AuthModule } from './auth/auth.module';
     ImageModule,
     PhoneModule,
     AuthModule,
+    MulterModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, MulterController],
   providers: [AppService, PrismaService],
 })
 export class AppModule {}

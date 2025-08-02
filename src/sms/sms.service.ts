@@ -7,6 +7,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSmDto } from './dto/create-sm.dto';
 import { UpdateSmDto } from './dto/update-sm.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SmsService {
@@ -48,12 +49,43 @@ export class SmsService {
     }
   }
 
-  async findAll() {
+  async findAll(query: any) {
     try {
-      const all = await this.prisma.sms.findMany();
-      return all;
+      const {
+        exampleId,
+        debtorId,
+        page = 1,
+        limit = 10,
+        sort = 'desc',
+      } = query;
+
+      const where: Prisma.SmsWhereInput = {
+        ...(exampleId && !isNaN(Number(exampleId))
+          ? { exampleId: Number(exampleId) }
+          : {}),
+        ...(debtorId && !isNaN(Number(debtorId))
+          ? { debtorId: Number(debtorId) }
+          : {}),
+      };
+
+      const [items, total] = await this.prisma.$transaction([
+        this.prisma.sms.findMany({
+          where,
+          skip: (Number(page) - 1) * Number(limit),
+          take: Number(limit),
+          orderBy: { date: sort === 'asc' ? 'asc' : 'desc' },
+        }),
+        this.prisma.sms.count({ where }),
+      ]);
+
+      return {
+        data: items,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      };
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message);
     }
   }
 

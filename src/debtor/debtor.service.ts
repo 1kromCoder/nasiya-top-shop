@@ -7,6 +7,7 @@ import {
 import { CreateDebtorDto } from './dto/create-debtor.dto';
 import { UpdateDebtorDto } from './dto/update-debtor.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class DebtorService {
@@ -32,10 +33,52 @@ export class DebtorService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    name?: string;
+    address?: string;
+    sellerId?: string;
+    sortBy?: 'name' | 'address' | 'createdAt';
+    order?: 'asc' | 'desc';
+    page?: string;
+    limit?: string;
+  }) {
     try {
-      const all = await this.prisma.debtor.findMany();
-      return all;
+      const {
+        name,
+        address,
+        sellerId,
+        sortBy = 'createdAt',
+        order = 'desc',
+        page = '1',
+        limit = '10',
+      } = query;
+
+      const pageNumber = parseInt(page, 10);
+      const limitNumber = parseInt(limit, 10);
+
+      const where: Prisma.DebtorWhereInput = {
+        ...(name && { name: { contains: name, mode: 'insensitive' } }),
+        ...(address && { address: { contains: address, mode: 'insensitive' } }),
+        ...(sellerId && { sellerId: Number(sellerId) }),
+      };
+
+      const [items, total] = await this.prisma.$transaction([
+        this.prisma.debtor.findMany({
+          where,
+          orderBy: { [sortBy]: order },
+          skip: (pageNumber - 1) * limitNumber,
+          take: limitNumber,
+        }),
+        this.prisma.debtor.count({ where }),
+      ]);
+
+      return {
+        data: items,
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
+      };
     } catch (error) {
       throw new UnauthorizedException(error);
     }

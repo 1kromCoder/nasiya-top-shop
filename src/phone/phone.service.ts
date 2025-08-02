@@ -36,10 +36,52 @@ export class PhoneService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    page?: number;
+    limit?: number;
+    sort?: 'asc' | 'desc';
+    phone?: string;
+    debtorId?: number;
+  }) {
     try {
-      const all = await this.prisma.phone.findMany();
-      return all;
+      const page =
+        isNaN(Number(query.page)) || Number(query.page) <= 0
+          ? 1
+          : Number(query.page);
+      const limit =
+        isNaN(Number(query.limit)) || Number(query.limit) <= 0
+          ? 10
+          : Number(query.limit);
+      const sort = query.sort ?? 'desc';
+
+      const where: any = {};
+      if (query.phone) {
+        where.phone = {
+          contains: query.phone,
+        };
+      }
+      if (query.debtorId) {
+        where.debtorId = query.debtorId;
+      }
+
+      const [items, total] = await this.prisma.$transaction([
+        this.prisma.phone.findMany({
+          where,
+          orderBy: {
+            id: sort,
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.phone.count({ where }),
+      ]);
+
+      return {
+        data: items,
+        total,
+        page,
+        limit,
+      };
     } catch (error) {
       throw new Error(error);
     }

@@ -46,10 +46,49 @@ export class ImageService {
     }
   }
 
-  async findAll() {
+  async findAll(query: {
+    page?: number;
+    limit?: number;
+    sort?: 'asc' | 'desc';
+    debtsId?: number;
+    debtorId?: number;
+  }) {
     try {
-      const all = await this.prisma.image.findMany();
-      return all;
+      // To'g'ri raqamga konvertatsiya qilamiz yoki default qiymat qo‘yamiz
+      const page =
+        isNaN(Number(query.page)) || Number(query.page) <= 0
+          ? 1
+          : Number(query.page);
+      const limit =
+        isNaN(Number(query.limit)) || Number(query.limit) <= 0
+          ? 10
+          : Number(query.limit);
+      const sort = query.sort ?? 'desc';
+      const debtsId = query.debtsId;
+      const debtorId = query.debtorId;
+
+      const where: any = {};
+      if (debtsId) where.debtsId = debtsId;
+      if (debtorId) where.debtorId = debtorId;
+
+      const [items, total] = await this.prisma.$transaction([
+        this.prisma.image.findMany({
+          where,
+          orderBy: {
+            id: sort,
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.image.count({ where }),
+      ]);
+
+      return {
+        total,
+        page,
+        limit,
+        data: items,
+      };
     } catch (error) {
       throw new Error(error);
     }
