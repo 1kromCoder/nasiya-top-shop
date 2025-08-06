@@ -66,6 +66,7 @@ export class PhoneService {
 
       const [items, total] = await this.prisma.$transaction([
         this.prisma.phone.findMany({
+          include: { debtor: true },
           where,
           orderBy: {
             id: sort,
@@ -89,7 +90,10 @@ export class PhoneService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.phone.findFirst({ where: { id } });
+      const one = await this.prisma.phone.findFirst({
+        where: { id },
+        include: { debtor: true },
+      });
       if (!one) {
         return { message: 'Phone not found' };
       }

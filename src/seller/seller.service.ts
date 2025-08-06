@@ -66,6 +66,7 @@ export class SellerService {
 
       const [items, total] = await this.prisma.$transaction([
         this.prisma.seller.findMany({
+          include: { Debtor: { include: { Debts: true } } },
           where,
           orderBy: { [sortBy]: order },
           skip: (pageNumber - 1) * limitNumber,
@@ -88,7 +89,10 @@ export class SellerService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.seller.findFirst({ where: { id } });
+      const one = await this.prisma.seller.findFirst({
+        where: { id },
+        include: { Debtor: { include: { Debts: true } } },
+      });
       if (!one) {
         return { message: 'Seller not found' };
       }

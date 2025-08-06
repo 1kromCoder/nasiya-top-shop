@@ -24,7 +24,7 @@ export class DebtsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   create(@Body() createDebtDto: CreateDebtDto) {
     return this.debtsService.create(createDebtDto);
   }

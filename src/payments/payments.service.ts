@@ -106,7 +106,13 @@ export class PaymentsService {
 
   async findAll() {
     try {
-      const all = await this.prisma.payments.findMany();
+      const all = await this.prisma.payments.findMany({
+        include: {
+          debts: {
+            include: { debtor: true },
+          },
+        },
+      });
       return all;
     } catch (error) {
       throw new Error(error);
@@ -115,7 +121,14 @@ export class PaymentsService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.payments.findFirst({ where: { id } });
+      const one = await this.prisma.payments.findFirst({
+        where: { id },
+        include: {
+          debts: {
+            include: { debtor: true },
+          },
+        },
+      });
       if (!one) {
         return { message: 'Payment not found' };
       }

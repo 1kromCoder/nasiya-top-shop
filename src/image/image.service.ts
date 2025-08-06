@@ -54,7 +54,6 @@ export class ImageService {
     debtorId?: number;
   }) {
     try {
-      // To'g'ri raqamga konvertatsiya qilamiz yoki default qiymat qo‘yamiz
       const page =
         isNaN(Number(query.page)) || Number(query.page) <= 0
           ? 1
@@ -73,6 +72,10 @@ export class ImageService {
 
       const [items, total] = await this.prisma.$transaction([
         this.prisma.image.findMany({
+          include: {
+            debts: true,
+            debtor: true,
+          },
           where,
           orderBy: {
             id: sort,
@@ -96,7 +99,13 @@ export class ImageService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.image.findFirst({ where: { id } });
+      const one = await this.prisma.image.findFirst({
+        where: { id },
+        include: {
+          debts: true,
+          debtor: true,
+        },
+      });
       if (!one) {
         return { message: 'Image not found' };
       }

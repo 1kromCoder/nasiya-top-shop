@@ -106,6 +106,11 @@ export class DebtsService {
 
       const [items, total] = await this.prisma.$transaction([
         this.prisma.debts.findMany({
+          include: {
+            debtor: {
+              include: { Seller: true },
+            },
+          },
           where,
           orderBy: {
             [sortBy]: order,
@@ -130,7 +135,14 @@ export class DebtsService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.debts.findFirst({ where: { id } });
+      const one = await this.prisma.debts.findFirst({
+        where: { id },
+        include: {
+          debtor: {
+            include: { Seller: true },
+          },
+        },
+      });
       if (!one) {
         return { message: 'Debt not found' };
       }

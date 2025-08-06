@@ -15,35 +15,6 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
-  // async login(data: LoginDto) {
-  //   const { name, password } = data;
-  //   if (!data.name || !data.password) {
-  //     throw new UnauthorizedException('Email or password is missing');
-  //   }
-  //   const seller = await this.prisma.seller.findFirst({
-  //     where: { name },
-  //   });
-  //   const admin = await this.prisma.admin.findFirst({ where: { name } });
-
-  //   const user = seller || admin;
-  //   const role = seller ? 'seller' : admin ? 'admin' : null;
-
-  //   if (!user) {
-  //     throw new NotFoundException('Bunday foydalanuvchi topilmadi');
-  //   }
-  //   const match = bcrypt.compareSync(password, user.password);
-
-  //   if (!match) {
-  //     throw new UnauthorizedException('Wrong password');
-  //   }
-
-  //   const token = this.jwt.sign({
-  //     id: user.id,
-  //     role,
-  //   });
-
-  //   return { token: token };
-  // }
   async login(data: LoginDto) {
     const { name, password } = data;
 
@@ -91,10 +62,11 @@ export class AuthService {
     if (role === 'seller') {
       const seller = await this.prisma.seller.findUnique({
         where: { id: userId },
+        include: { Debtor: { include: { Debts: true } } },
       });
       return { role, ...seller };
     }
 
-    throw new UnauthorizedException('Noto‘g‘ri foydalanuvchi turi');
+    throw new UnauthorizedException('Noto‘g‘ri foydalanuvchi turi!');
   }
 }

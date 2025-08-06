@@ -70,6 +70,10 @@ export class SmsService {
 
       const [items, total] = await this.prisma.$transaction([
         this.prisma.sms.findMany({
+          include: {
+            example: true,
+            debtor: true,
+          },
           where,
           skip: (Number(page) - 1) * Number(limit),
           take: Number(limit),
@@ -91,7 +95,13 @@ export class SmsService {
 
   async findOne(id: number) {
     try {
-      const one = await this.prisma.sms.findFirst({ where: { id } });
+      const one = await this.prisma.sms.findFirst({
+        where: { id },
+        include: {
+          example: true,
+          debtor: true,
+        },
+      });
       if (!one) {
         return { message: 'Sms not found' };
       }
