@@ -21,8 +21,8 @@ import { ApiQuery } from '@nestjs/swagger';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
   @Post()
-  // @UseGuards(JwtAuthGuard, RbucGuard)
-  // @Roles('admin')
+  @UseGuards(JwtAuthGuard, RbucGuard)
+  @Roles('admin')
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
