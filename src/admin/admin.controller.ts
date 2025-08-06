@@ -23,6 +23,7 @@ export class AdminController {
   @Post()
   @UseGuards(JwtAuthGuard, RbucGuard)
   @Roles('admin')
+  
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
