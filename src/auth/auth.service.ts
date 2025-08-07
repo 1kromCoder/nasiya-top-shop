@@ -64,7 +64,17 @@ export class AuthService {
         where: { id: userId },
         include: { Debtor: { include: { Debts: true } } },
       });
-      return { role, ...seller };
+      const overdueDebts = await this.prisma.debts.findMany({
+        where: {
+          Payments: {
+            some: {
+              isActive: true,
+              endDate: { lt: new Date() },
+            },
+          },
+        },
+      });
+      return { role, ...seller, overdueDebts };
     }
 
     throw new UnauthorizedException('Noto‘g‘ri foydalanuvchi turi!');
