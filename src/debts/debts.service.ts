@@ -8,6 +8,8 @@ import { CreateDebtDto } from './dto/create-debt.dto';
 import { UpdateDebtDto } from './dto/update-debt.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { DebtDateDto } from './dto/debts.date.dto';
+import { log } from 'console';
 
 @Injectable()
 export class DebtsService {
@@ -76,6 +78,58 @@ export class DebtsService {
       console.error(error);
       throw new BadRequestException(error.message || error);
     }
+  }
+
+  async debtDate(filter: DebtDateDto, sellerId: number) {
+    const dateObj = new Date(filter.date); // majburiy konvertatsiya
+
+    const seller = await this.prisma.seller.findFirst({
+      where: { id: sellerId },
+    });
+    if (!seller) throw new BadRequestException('seller not found');
+
+    const startOfMonth = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+    const endOfMonth = new Date(
+      dateObj.getFullYear(),
+      dateObj.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
+
+    const unpaidForDay = await this.prisma.payments.findMany({
+      where: {
+        isActive: true,
+        endDate: {
+          gte: new Date(dateObj.setHours(0, 0, 0, 0)),
+          lt: new Date(dateObj.setHours(23, 59, 59, 999)),
+        },
+        debts: { debtor: { sellerId } },
+      },
+      
+      include: { debts: { include: { debtor: true } } },
+    });
+
+    const ForMonth = await this.prisma.payments.findMany({
+      where: {
+        endDate: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+        debts: { debtor: { sellerId } },
+      },
+      select: { amount: true },
+    });
+
+    const totalForMonth = ForMonth.reduce((acc, p) => acc + p.amount, 0);
+
+    return {
+      data: { unpaidForDay, totalForMonth },
+      message: 'Unpaid payments fetched',
+      status: 200,
+    };
   }
 
   async findAll(query: {

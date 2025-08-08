@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
+  Req,
 } from '@nestjs/common';
 import { DebtsService } from './debts.service';
 import { CreateDebtDto } from './dto/create-debt.dto';
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from 'src/guard/jwt.guard';
 import { RbucGuard } from 'src/guard/rbac.guard';
 import { Roles } from 'src/auth/decoration/auth.decoration';
 import { ApiQuery } from '@nestjs/swagger';
+import { DebtDateDto } from './dto/debts.date.dto';
 
 @Controller('debts')
 export class DebtsController {
@@ -50,6 +52,13 @@ export class DebtsController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   findAll(@Query() query: any) {
     return this.debtsService.findAll(query);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('date')
+  @ApiQuery({ name: 'date', required: false, type: Date })
+  debtDate(@Query() data: DebtDateDto, @Req() req: Request) {
+    const sellerId = req['user'].id;
+    return this.debtsService.debtDate(data, sellerId);
   }
 
   @Get(':id')
