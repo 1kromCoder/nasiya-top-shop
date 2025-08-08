@@ -39,7 +39,7 @@ export class DebtsController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   @ApiQuery({ name: 'period', required: false, type: Number })
   @ApiQuery({ name: 'amount', required: false, type: Number })
   @ApiQuery({

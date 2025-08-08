@@ -30,7 +30,7 @@ export class DebtorController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'address', required: false, type: String })
   @ApiQuery({ name: 'sellerId', required: false, type: Number })
