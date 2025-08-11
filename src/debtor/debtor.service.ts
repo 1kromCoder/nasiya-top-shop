@@ -121,8 +121,15 @@ export class DebtorService {
         );
         return acc + (debt.amount - activePaymentsSum);
       }, 0);
+      const totalPayment = one.Debts.reduce((acc, debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc + pay.amount,
+          0,
+        );
+        return acc + activePaymentsSum;
+      }, 0);
 
-      return { ...one, totalDebt };
+      return { ...one, totalDebt, totalPayment };
     } catch (error) {
       throw new BadRequestException(error);
     }
