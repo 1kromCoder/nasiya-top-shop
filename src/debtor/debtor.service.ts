@@ -50,11 +50,11 @@ export class DebtorService {
         sortBy = 'createdAt',
         order = 'desc',
         page = '1',
-        limit = '10',
+        limit = '30',
       } = query;
 
       const pageNumber = parseInt(page, 10);
-      const limitNumber = parseInt(limit, 10);
+      const limitNumber = parseInt(limit, 30);
 
       const where: Prisma.DebtorWhereInput = {
         ...(name && { name: { contains: name, mode: 'insensitive' } }),

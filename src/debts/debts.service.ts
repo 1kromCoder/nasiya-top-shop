@@ -147,11 +147,11 @@ export class DebtsService {
         sortBy = 'createdAt',
         order = 'desc',
         page = '1',
-        limit = '10',
+        limit = '30',
       } = query;
 
       const pageNumber = parseInt(page, 10);
-      const limitNumber = parseInt(limit, 10);
+      const limitNumber = parseInt(limit, 30);
 
       const where: Prisma.DebtsWhereInput = {
         ...(period ? { period: Number(period) } : {}),
