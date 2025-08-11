@@ -80,7 +80,7 @@ export class DebtorService {
       const enricher = items.map(item => {
         const totalDebt = item.Debts.reduce((acc, debt) => {
           const activePaymentsSum = debt.Payments.reduce((acc, pay) => acc + pay.amount, 0)
-          return acc + activePaymentsSum
+          return acc + (debt.amount -  activePaymentsSum)
         }, 0 )
         return {...item, totalDebt}
       })
