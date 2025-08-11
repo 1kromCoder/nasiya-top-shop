@@ -67,7 +67,7 @@ export class DebtorService {
           include: {
             Seller: true,
             Debts: { include: { Payments: true } },
-            Phones: true
+            Phones: true,
           },
           where,
           orderBy: { [sortBy]: order },
@@ -76,14 +76,17 @@ export class DebtorService {
         }),
         this.prisma.debtor.count({ where }),
       ]);
-      
-      const enricher = items.map(item => {
+
+      const enricher = items.map((item) => {
         const totalDebt = item.Debts.reduce((acc, debt) => {
-          const activePaymentsSum = debt.Payments.reduce((acc, pay) => acc + pay.amount, 0)
-          return acc + (debt.amount -  activePaymentsSum)
-        }, 0 )
-        return {...item, totalDebt}
-      })
+          const activePaymentsSum = debt.Payments.reduce(
+            (acc, pay) => acc + pay.amount,
+            0,
+          );
+          return acc + (debt.amount - activePaymentsSum);
+        }, 0);
+        return { ...item, totalDebt };
+      });
       return {
         data: enricher,
         total,
@@ -95,13 +98,15 @@ export class DebtorService {
       throw new UnauthorizedException(error);
     }
   }
-  
+
   async findOne(id: number) {
     try {
       const one = await this.prisma.debtor.findFirst({
         where: { id },
         include: {
           Seller: true,
+          Debts: { include: { Payments: true } },
+          Phones: true,
         },
       });
       if (!one) {
