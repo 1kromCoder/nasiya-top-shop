@@ -9,22 +9,22 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ImageService } from './image.service';
-import { CreateImageDto } from './dto/create-image.dto';
-import { UpdateImageDto } from './dto/update-image.dto';
-import { Roles } from 'src/auth/decoration/auth.decoration';
+import { ImagesDebtsService } from './images-debts.service';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
 import { RbucGuard } from 'src/guard/rbac.guard';
+import { Roles } from 'src/auth/decoration/auth.decoration';
+import { CreateImageDebtsDto } from './dto/create-images-debt.dto';
 import { ApiQuery } from '@nestjs/swagger';
+import { UpdateImagesDebtDto } from './dto/update-images-debt.dto';
 
-@Controller('image')
-export class ImageController {
-  constructor(private readonly imageService: ImageService) {}
+@Controller('images-debts')
+export class ImagesDebtsController {
+  constructor(private readonly imageService: ImagesDebtsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RbucGuard)
   @Roles('admin', 'seller')
-  create(@Body() createImageDto: CreateImageDto) {
+  create(@Body() createImageDto: CreateImageDebtsDto) {
     return this.imageService.create(createImageDto);
   }
 
@@ -39,7 +39,7 @@ export class ImageController {
     enum: ['asc', 'desc'],
     example: 'desc',
   })
-  @ApiQuery({ name: 'debtsId', required: false, type: Number})
+  @ApiQuery({ name: 'debtsId', required: false, type: Number })
   @ApiQuery({ name: 'debtorId', required: false, type: Number })
   findAll(
     @Query('page') page?: number,
@@ -52,7 +52,7 @@ export class ImageController {
       page: Number(page),
       limit: Number(limit),
       sort,
-      debtorId: debtorId ? Number(debtorId) : undefined,
+      debtsId: debtsId ? Number(debtsId) : undefined,
     });
   }
 
@@ -66,7 +66,7 @@ export class ImageController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)
   @Roles('admin', 'seller')
-  update(@Param('id') id: string, @Body() updateImageDto: UpdateImageDto) {
+  update(@Param('id') id: string, @Body() updateImageDto: UpdateImagesDebtDto) {
     return this.imageService.update(+id, updateImageDto);
   }
 

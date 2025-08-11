@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class CreateImageDto {
+export class CreateImageDebtsDto {
   @ApiProperty()
   @IsString()
   img: string;
   @ApiProperty()
   @IsOptional()
   @IsInt()
-  debtorId?: number;
+  debtsId?: number;
 }

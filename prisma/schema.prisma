@@ -52,18 +52,18 @@ model Seller {
 }
 
 model Debts {
-  id        Int        @id @default(autoincrement())
-  date      DateTime
-  time      String
-  period    Int
-  amount    Int
-  note      String
-  debtor    Debtor?    @relation(fields: [debtorId], references: [id])
-  debtorId  Int?
-  Payments  Payments[]
-  Imgs      Image[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id         Int          @id @default(autoincrement())
+  date       DateTime
+  time       String
+  period     Int
+  amount     Int
+  note       String
+  debtor     Debtor?      @relation(fields: [debtorId], references: [id])
+  debtorId   Int?
+  Payments   Payments[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  ImageDebts ImageDebts[]
 }
 
 model Sms {
@@ -98,10 +98,15 @@ model Payments {
 model Image {
   id       Int     @id @default(autoincrement())
   img      String
-  debts    Debts?  @relation(fields: [debtsId], references: [id])
-  debtsId  Int?
   debtor   Debtor? @relation(fields: [debtorId], references: [id])
   debtorId Int?
+}
+
+model ImageDebts {
+  id      Int    @id @default(autoincrement())
+  img     String
+  debts   Debts? @relation(fields: [debtsId], references: [id])
+  debtsId Int?
 }
 
 model Phone {

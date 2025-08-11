@@ -17,6 +17,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterController } from './multer/multer.module';
+import { ImagesDebtsModule } from './images-debts/images-debts.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { MulterController } from './multer/multer.module';
     PhoneModule,
     AuthModule,
     MulterModule,
+    ImagesDebtsModule,
   ],
   controllers: [AppController, MulterController],
   providers: [AppService, PrismaService],
