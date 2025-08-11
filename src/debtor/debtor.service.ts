@@ -109,10 +109,20 @@ export class DebtorService {
           Phones: true,
         },
       });
+
       if (!one) {
         return { message: 'Debtor not found' };
       }
-      return one;
+
+      const totalDebt = one.Debts.reduce((acc, debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc + pay.amount,
+          0,
+        );
+        return acc + (debt.amount - activePaymentsSum);
+      }, 0);
+
+      return { ...one, totalDebt };
     } catch (error) {
       throw new BadRequestException(error);
     }
