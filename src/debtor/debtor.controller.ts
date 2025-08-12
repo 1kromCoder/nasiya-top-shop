@@ -65,6 +65,7 @@ export class DebtorController {
   changeStar(@Param('id') id: string) {
     return this.debtorService.changeStar(+id);
   }
+  
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)
