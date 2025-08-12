@@ -108,7 +108,7 @@ export class DebtsService {
         },
         debts: { debtor: { sellerId } },
       },
-      
+
       include: { debts: { include: { debtor: true } } },
     });
 
@@ -192,6 +192,7 @@ export class DebtsService {
       const one = await this.prisma.debts.findFirst({
         where: { id },
         include: {
+          ImageDebts: true,
           debtor: {
             include: { Seller: true },
           },

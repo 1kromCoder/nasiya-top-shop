@@ -105,6 +105,7 @@ export class DebtorService {
         where: { id },
         include: {
           Seller: true,
+          Imgs: true,
           Debts: { include: { Payments: true } },
           Phones: true,
         },
