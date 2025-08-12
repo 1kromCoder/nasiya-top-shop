@@ -59,6 +59,12 @@ export class DebtorController {
   update(@Param('id') id: string, @Body() updateDebtorDto: UpdateDebtorDto) {
     return this.debtorService.update(+id, updateDebtorDto);
   }
+  @Patch('star/:id')
+  @UseGuards(JwtAuthGuard, RbucGuard)
+  @Roles('admin', 'seller')
+  changeStar(@Param('id') id: string) {
+    return this.debtorService.changeStar(+id);
+  }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)

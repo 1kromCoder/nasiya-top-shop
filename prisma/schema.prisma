@@ -30,6 +30,7 @@ model Debtor {
   note      String
   Seller    Seller?  @relation(fields: [sellerId], references: [id])
   sellerId  Int?
+  star      Boolean? @default(false)
   Debts     Debts[]
   Sms       Sms[]
   Imgs      Image[]

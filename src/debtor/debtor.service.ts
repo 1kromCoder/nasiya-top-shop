@@ -129,7 +129,17 @@ export class DebtorService {
         return acc + activePaymentsSum;
       }, 0);
 
-      return { ...one, totalDebt, totalPayment };
+      const enrichedDebt = one.Debts.map((debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc + pay.amount,
+          0,
+        );
+        return {
+          ...debt,
+          activePaymentsSum,
+        };
+      });
+      return { ...one, Debts: enrichedDebt, totalDebt, totalPayment };
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -151,6 +161,22 @@ export class DebtorService {
         throw new NotFoundException(`Seller not found`);
       }
       const edit = await this.prisma.debtor.update({ where: { id }, data });
+      return edit;
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
+  async changeStar(id: number) {
+    try {
+      const one = await this.prisma.debtor.findFirst({ where: { id } });
+      if (!one) {
+        return { message: 'Debtor not found' };
+      }
+
+      const edit = await this.prisma.debtor.update({
+        where: { id },
+        data: { star: !one.star },
+      });
       return edit;
     } catch (error) {
       throw new UnauthorizedException(error);
