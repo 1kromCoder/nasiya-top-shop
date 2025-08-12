@@ -134,9 +134,19 @@ export class DebtorService {
           (acc, pay) => acc + pay.amount,
           0,
         );
+
+        const monthlyAmount = Math.floor(debt.amount / debt.period);
+
+        // Keyingi to'lovni topish
+        const nextPay = debt.Payments.find((p) => p.isActive);
+
         return {
           ...debt,
           activePaymentsSum,
+          monthlyAmount,
+          nextPayment: nextPay
+            ? { date: nextPay.endDate, amount: nextPay.amount }
+            : null,
         };
       });
       return { ...one, Debts: enrichedDebt, totalDebt, totalPayment };
