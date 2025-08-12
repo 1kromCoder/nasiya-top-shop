@@ -131,8 +131,8 @@ export class DebtorService {
 
       const enrichedDebt = one.Debts.map((debt) => {
         const activePaymentsSum = debt.Payments.reduce(
-          (acc, pay) => acc + pay.amount,
-          0,
+          (acc, pay) => acc - pay.amount,
+          debt.amount,
         );
 
         const monthlyAmount = Math.floor(debt.amount / debt.period);
