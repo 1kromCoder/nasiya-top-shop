@@ -162,8 +162,9 @@ export class DebtsService {
         this.prisma.debts.findMany({
           include: {
             ImageDebts: true,
+            Payments: true,
             debtor: {
-              include: { Seller: true, Imgs: true, },
+              include: { Seller: true, Imgs: true, Debts: true },
             },
           },
           where,
@@ -188,21 +189,115 @@ export class DebtsService {
     }
   }
 
+  // async findOne(id: number) {
+  //   try {
+  //     const one = await this.prisma.debts.findFirst({
+  //       where: { id },
+  //       include: {
+  //         ImageDebts: true,
+  //         Payments: true,
+  //         debtor: {
+  //           include: { Seller: true, Imgs: true, Debts: true },
+  //         },
+  //       },
+  //     });
+  //     if (!one) {
+  //       return { message: 'Debt not found' };
+  //     }
+
+  //     const totalDebt = one.Debts.reduce((acc, debt) => {
+  //       const activePaymentsSum = debt.Payments.reduce(
+  //         (acc, pay) => acc + pay.amount,
+  //         0,
+  //       );
+  //       return acc + (debt.amount - activePaymentsSum);
+  //     }, 0);
+  //     const totalPayment = one.Debts.reduce((acc, debt) => {
+  //       const activePaymentsSum = debt.Payments.reduce(
+  //         (acc, pay) => acc + pay.amount,
+  //         0,
+  //       );
+  //       return acc + activePaymentsSum;
+  //     }, 0);
+
+  //     const enrichedDebt = one.debtor.Debts.map((debt) => {
+  //       const activePaymentsSum = debt.Payments.reduce(
+  //         (acc, pay) => acc - pay.amount,
+  //         debt.amount,
+  //       );
+
+  //     return one;
+  //   } catch (error) {
+  //     throw new BadRequestException(error);
+  //   }
+  // }
+
   async findOne(id: number) {
     try {
       const one = await this.prisma.debts.findFirst({
         where: { id },
         include: {
           ImageDebts: true,
+          Payments: true,
           debtor: {
-            include: { Seller: true },
+            include: {
+              Seller: true,
+              Imgs: true,
+              Debts: {
+                include: {
+                  Payments: true,
+                },
+              },
+            },
           },
         },
       });
+
       if (!one) {
         return { message: 'Debt not found' };
       }
-      return one;
+      if (!one.debtor) {
+        return {
+          ...one,
+          totalDebt: 0,
+          totalPayment: 0,
+        };
+      }
+      // debtor ichidagi barcha qarzlar bo‘yicha umumiy hisob
+      const totalDebt = one.debtor.Debts.reduce((acc, debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc + pay.amount,
+          0,
+        );
+        return acc + (debt.amount - activePaymentsSum);
+      }, 0);
+
+      const totalPayment = one.debtor.Debts.reduce((acc, debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc + pay.amount,
+          0,
+        );
+        return acc + activePaymentsSum;
+      }, 0);
+      const enrichedDebt = one.debtor.Debts.map((debt) => {
+        const activePaymentsSum = debt.Payments.reduce(
+          (acc, pay) => acc - pay.amount,
+          debt.amount,
+        );
+        return {
+          ...debt,
+          activePaymentsSum,
+        };
+      });
+      return {
+        ...one,
+        debtor: {
+          ...one.debtor,
+          Debts: enrichedDebt,
+        },
+        totalDebt,
+        totalPayment,
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -223,8 +318,8 @@ export class DebtsService {
       if (!debtor) {
         throw new NotFoundException(`Debtor not found`);
       }
-      await this.prisma.imageDebts.deleteMany({where:{debtsId: id}});
-      
+      await this.prisma.imageDebts.deleteMany({ where: { debtsId: id } });
+
       const updatedDebt = await this.prisma.debts.update({
         where: { id },
         data: {
