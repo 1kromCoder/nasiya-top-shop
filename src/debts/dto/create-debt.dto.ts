@@ -13,6 +13,9 @@ export class CreateDebtDto {
   @ApiProperty({ example: '2025-07-31T00:00:00.000Z' })
   @IsDateString()
   date: string;
+  @ApiProperty()
+  @IsString()
+  productName: string;
   @ApiProperty({ example: '14:12' })
   @IsString()
   time: string;
