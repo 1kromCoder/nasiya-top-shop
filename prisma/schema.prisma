@@ -54,7 +54,7 @@ model Seller {
 
 model Debts {
   id          Int          @id @default(autoincrement())
-  productName String
+  productName String?
   date        DateTime
   time        String
   period      Int
