@@ -289,6 +289,11 @@ export class DebtsService {
           activePaymentsSum,
         };
       });
+
+      const mainDebtActivePaymentsSum = one.Payments.reduce(
+        (acc, pay) => acc - pay.amount,
+        one.amount,
+      );
       return {
         ...one,
         debtor: {
@@ -296,6 +301,7 @@ export class DebtsService {
           Debts: enrichedDebt,
         },
         totalDebt,
+        activePaymentsSum: mainDebtActivePaymentsSum,
         totalPayment,
       };
     } catch (error) {
