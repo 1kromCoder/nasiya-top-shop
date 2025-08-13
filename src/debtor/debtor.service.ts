@@ -68,6 +68,7 @@ export class DebtorService {
             Seller: true,
             Debts: { include: { Payments: true } },
             Phones: true,
+            Imgs: true,
           },
           where,
           orderBy: { [sortBy]: order },
