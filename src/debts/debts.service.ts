@@ -163,7 +163,7 @@ export class DebtsService {
           include: {
             ImageDebts: true,
             debtor: {
-              include: { Seller: true },
+              include: { Seller: true, Imgs: true, },
             },
           },
           where,
