@@ -223,6 +223,8 @@ export class DebtsService {
       if (!debtor) {
         throw new NotFoundException(`Debtor not found`);
       }
+      await this.prisma.imageDebts.deleteMany({where:{debtsId: id}});
+      
       const updatedDebt = await this.prisma.debts.update({
         where: { id },
         data: {
