@@ -161,6 +161,7 @@ export class DebtsService {
       const [items, total] = await this.prisma.$transaction([
         this.prisma.debts.findMany({
           include: {
+            ImageDebts: true,
             debtor: {
               include: { Seller: true },
             },
