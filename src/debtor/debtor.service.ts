@@ -172,6 +172,9 @@ export class DebtorService {
       if (!seller) {
         throw new NotFoundException(`Seller not found`);
       }
+      await this.prisma.image.deleteMany({ where: { debtorId: id } });
+      await this.prisma.phone.deleteMany({ where: { debtorId: id } });
+
       const edit = await this.prisma.debtor.update({ where: { id }, data });
       return edit;
     } catch (error) {
