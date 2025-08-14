@@ -53,8 +53,9 @@ export class DebtsController {
   findAll(@Query() query: any) {
     return this.debtsService.findAll(query);
   }
-  @UseGuards(JwtAuthGuard)
   @Get('date')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin', 'seller')
   @ApiQuery({ name: 'date', required: false, type: Date })
   debtDate(@Query() data: DebtDateDto, @Req() req: Request) {
     const sellerId = req['user'].id;
@@ -77,7 +78,7 @@ export class DebtsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   remove(@Param('id') id: string) {
     return this.debtsService.remove(+id);
   }
