@@ -113,9 +113,15 @@ export class PaymentsService {
         where: { id: debtsId },
       });
       if (!debt) throw new NotFoundException('Debt not found');
-
+      if (amount) {
+        if (debt.amount < amount) {
+          throw new BadRequestException(
+            `Kiritilgan summa qarzdan oshib ketdi. Maksimal: ${debt.amount}`,
+          );
+        }
+      }
       const monthlyAmount = Math.floor(debt.amount / debt.period);
-
+      
       // Qolgan qarz va to‘langan miqdorni topamiz
       const paidPayments = await this.prisma.payments.findMany({
         where: { debtsId },
@@ -129,8 +135,8 @@ export class PaymentsService {
 
       const remainingAmount = debt.amount - totalPaid;
       const remainingMonths = debt.period - paidMonths;
-
-      if (remainingAmount <= 0 || remainingMonths <= 0) {
+      
+      if (remainingAmount <= 0) {
         throw new BadRequestException('Qarz allaqachon to‘liq to‘langan');
       }
 
