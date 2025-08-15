@@ -121,7 +121,7 @@ export class PaymentsService {
         }
       }
       const monthlyAmount = Math.floor(debt.amount / debt.period);
-      
+
       // Qolgan qarz va to‘langan miqdorni topamiz
       const paidPayments = await this.prisma.payments.findMany({
         where: { debtsId },
@@ -135,7 +135,7 @@ export class PaymentsService {
 
       const remainingAmount = debt.amount - totalPaid;
       const remainingMonths = debt.period - paidMonths;
-      
+
       if (remainingAmount <= 0) {
         throw new BadRequestException('Qarz allaqachon to‘liq to‘langan');
       }
@@ -207,7 +207,7 @@ export class PaymentsService {
       const all = await this.prisma.payments.findMany({
         include: {
           debts: {
-            include: { debtor: true },
+            include: { debtor: { include: { Phones: true } } },
           },
         },
       });
@@ -223,7 +223,7 @@ export class PaymentsService {
         where: { id },
         include: {
           debts: {
-            include: { debtor: true },
+            include: { debtor: { include: { Phones: true } } },
           },
         },
       });
