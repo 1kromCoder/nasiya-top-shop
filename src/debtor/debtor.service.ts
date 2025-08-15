@@ -68,6 +68,7 @@ export class DebtorService {
             Seller: true,
             Debts: { include: { Payments: true } },
             Phones: true,
+            Sms: true,
             Imgs: true,
           },
           where,
@@ -107,6 +108,7 @@ export class DebtorService {
         include: {
           Seller: true,
           Imgs: true,
+          Sms: true,
           Debts: { include: { Payments: true } },
           Phones: true,
         },
