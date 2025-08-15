@@ -21,7 +21,7 @@ export class ExampleController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   create(@Body() createExampleDto: CreateExampleDto) {
     return this.exampleService.create(createExampleDto);
   }
@@ -42,14 +42,14 @@ export class ExampleController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   update(@Param('id') id: string, @Body() updateExampleDto: UpdateExampleDto) {
     return this.exampleService.update(+id, updateExampleDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RbucGuard)
-  @Roles('admin')
+  @Roles('admin', 'seller')
   remove(@Param('id') id: string) {
     return this.exampleService.remove(+id);
   }
