@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."Payments" ALTER COLUMN "endDate" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "isActive" SET DEFAULT true;

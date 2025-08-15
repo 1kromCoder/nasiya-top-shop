@@ -88,11 +88,11 @@ model Example {
 model Payments {
   id        Int      @id @default(autoincrement())
   amount    Int
-  month     Int?
-  endDate   DateTime
+  month     Int? 
+  endDate   DateTime @default(now())
   debts     Debts?   @relation(fields: [debtsId], references: [id])
   debtsId   Int?
-  isActive  Boolean
+  isActive  Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

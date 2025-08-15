@@ -4,6 +4,7 @@ import { IsBoolean, IsDateString, IsInt, IsOptional } from 'class-validator';
 export class CreatePaymentDto {
   @ApiProperty({ example: 300000 })
   @IsInt()
+  @IsOptional()
   amount: number;
   @ApiPropertyOptional({
     example: 0,
@@ -15,11 +16,13 @@ export class CreatePaymentDto {
   month?: number;
   @ApiProperty({ example: '2025-07-31T00:00:00.000Z' })
   @IsDateString()
+  @IsOptional()
   endDate: string;
   @ApiProperty()
   @IsInt()
   debtsId: number;
   @ApiProperty()
   @IsBoolean()
+  @IsOptional()
   isActive: boolean;
 }

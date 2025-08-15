@@ -47,15 +47,16 @@ export class PaymentsService {
       }
 
       let paymentMonths: number;
+      let realAmount = amount
 
       if (month !== undefined) {
         const expected = month * monthlyAmount;
-
-        if (amount !== expected) {
-          throw new BadRequestException(
-            `To pay for ${month} month(s), amount must be exactly ${expected}`,
-          );
-        }
+        realAmount = expected
+        // if (amount !== expected) {
+        //   throw new BadRequestException(
+        //     `To pay for ${month} month(s), amount must be exactly ${expected}`,
+        //   );
+        // }
 
         if (month > remainingMonths) {
           throw new BadRequestException(
@@ -81,7 +82,7 @@ export class PaymentsService {
       const newPayment = await this.prisma.payments.create({
         data: {
           ...rest,
-          amount,
+          amount: realAmount,
           month: paymentMonths,
           endDate: new Date(endDate),
           isActive: true,
