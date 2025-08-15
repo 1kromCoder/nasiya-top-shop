@@ -178,7 +178,7 @@ export class PaymentsService {
           ...rest,
           amount: paymentAmount,
           month: paymentMonths,
-          endDate: new Date(endDate),
+          endDate: endDate ? new Date(endDate) : undefined,
           isActive: true,
           debts: {
             connect: { id: debtsId },
