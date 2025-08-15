@@ -14,6 +14,9 @@ export class CreatePaymentDto {
   @IsInt()
   @IsOptional()
   month?: number;
+  @ApiProperty({ example: [1, 2, 3] })
+  @IsOptional()
+  months?: number[];
   @ApiProperty({ example: '2025-07-31T00:00:00.000Z' })
   @IsDateString()
   @IsOptional()
