@@ -133,4 +133,13 @@ export class SellerService {
       throw new UnauthorizedException(error);
     }
   }
+
+
+  async logout() {
+    try {
+      return { message: 'Successfully logged out' };
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
 }

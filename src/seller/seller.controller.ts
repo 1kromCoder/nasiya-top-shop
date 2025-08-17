@@ -67,4 +67,10 @@ export class SellerController {
   remove(@Param('id') id: string) {
     return this.sellerService.remove(+id);
   }
+  @Post('logout')
+  @UseGuards(JwtAuthGuard, RbucGuard)
+  @Roles('admin', 'seller')
+  logout() {
+    return this.sellerService.logout();
+  }
 }
