@@ -69,14 +69,14 @@ model Debts {
 }
 
 model Sms {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   text      String
-  date      DateTime?
-  sent      Boolean?
-  example   Example? @relation(fields: [exampleId], references: [id])
+  date      DateTime? @default(now())
+  sent      Boolean?  @default(false)
+  example   Example?  @relation(fields: [exampleId], references: [id])
   exampleId Int?
-  debtor    Debtor?  @relation(fields: [debtorId], references: [id])
-  createdAt DateTime @default(now())
+  debtor    Debtor?   @relation(fields: [debtorId], references: [id])
+  createdAt DateTime  @default(now())
   debtorId  Int?
 }
 

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."Sms" ALTER COLUMN "date" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "sent" SET DEFAULT false;
