@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsInt, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateSmDto {
   @ApiProperty()
@@ -13,6 +19,7 @@ export class CreateSmDto {
   sent: boolean;
   @ApiProperty()
   @IsInt()
+  @IsOptional()
   exampleId: number;
   @ApiProperty()
   @IsInt()
