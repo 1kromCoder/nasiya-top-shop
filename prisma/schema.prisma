@@ -76,6 +76,7 @@ model Sms {
   example   Example? @relation(fields: [exampleId], references: [id])
   exampleId Int?
   debtor    Debtor?  @relation(fields: [debtorId], references: [id])
+  createdAt DateTime @default(now())
   debtorId  Int?
 }
 
@@ -88,11 +89,11 @@ model Example {
 model Payments {
   id        Int      @id @default(autoincrement())
   amount    Int
-  month     Int? 
+  month     Int?
   endDate   DateTime @default(now())
   debts     Debts?   @relation(fields: [debtsId], references: [id])
   debtsId   Int?
-  isActive  Boolean @default(true)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
