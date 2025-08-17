@@ -14,7 +14,7 @@ export class SmsService {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateSmDto) {
     try {
-      const { exampleId, debtorId, date, ...rest } = data;
+      const { debtorId, date, ...rest } = data;
 
       const debtor = await this.prisma.debtor.findFirst({
         where: { id: debtorId },
@@ -23,13 +23,8 @@ export class SmsService {
       if (!debtor) {
         return { message: 'Debtor not found' };
       }
-      const example = await this.prisma.example.findFirst({
-        where: { id: exampleId },
-      });
+    
 
-      if (!example) {
-        return { message: 'Example not found' };
-      }
 
       const post = await this.prisma.sms.create({
         data: {
@@ -38,9 +33,7 @@ export class SmsService {
           debtor: {
             connect: { id: debtorId },
           },
-          example: {
-            connect: { id: exampleId },
-          },
+
         },
       });
       return post;
@@ -71,7 +64,6 @@ export class SmsService {
       const [items, total] = await this.prisma.$transaction([
         this.prisma.sms.findMany({
           include: {
-            example: true,
             debtor: true,
           },
           where,
@@ -98,7 +90,6 @@ export class SmsService {
       const one = await this.prisma.sms.findFirst({
         where: { id },
         include: {
-          example: true,
           debtor: true,
         },
       });
@@ -117,7 +108,7 @@ export class SmsService {
       if (!sms) {
         return { message: 'Sms not found' };
       }
-      const { debtorId, exampleId, date, ...rest } = data;
+      const { debtorId, date, ...rest } = data;
 
       const debtor = await this.prisma.debtor.findFirst({
         where: { id: debtorId },
@@ -126,13 +117,7 @@ export class SmsService {
       if (!debtor) {
         throw new NotFoundException(`Debtor not found`);
       }
-      const example = await this.prisma.example.findFirst({
-        where: { id: exampleId },
-      });
 
-      if (!example) {
-        throw new NotFoundException(`Example not found`);
-      }
 
       const updatedDebt = await this.prisma.sms.update({
         where: { id },
@@ -142,9 +127,7 @@ export class SmsService {
           debtor: {
             connect: { id: debtorId },
           },
-          example: {
-            connect: { id: exampleId },
-          },
+
         },
       });
 

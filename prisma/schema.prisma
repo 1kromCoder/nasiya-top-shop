@@ -72,9 +72,7 @@ model Sms {
   id        Int       @id @default(autoincrement())
   text      String
   date      DateTime? @default(now())
-  sent      Boolean?  @default(false)
-  example   Example?  @relation(fields: [exampleId], references: [id])
-  exampleId Int?
+
   debtor    Debtor?   @relation(fields: [debtorId], references: [id])
   createdAt DateTime  @default(now())
   debtorId  Int?
@@ -83,7 +81,6 @@ model Sms {
 model Example {
   id   Int    @id @default(autoincrement())
   text String
-  Sms  Sms[]
 }
 
 model Payments {

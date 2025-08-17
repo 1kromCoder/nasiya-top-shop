@@ -16,13 +16,7 @@ export class CreateSmDto {
   @IsOptional()
   date: string;
   @ApiProperty()
-  @IsBoolean()
-  @IsOptional()
-  sent: boolean;
-  @ApiProperty()
-  @IsInt()
-  @IsOptional()
-  exampleId: number;
+
   @ApiProperty()
   @IsInt()
   debtorId: number;
