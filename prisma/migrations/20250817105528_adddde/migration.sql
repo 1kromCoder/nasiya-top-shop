@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."Sms" ALTER COLUMN "date" DROP NOT NULL,
+ALTER COLUMN "sent" DROP NOT NULL;
