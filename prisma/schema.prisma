@@ -81,6 +81,7 @@ model Sms {
 model Example {
   id   Int    @id @default(autoincrement())
   text String
+  isActive Boolean @default(true)
 }
 
 model Payments {
