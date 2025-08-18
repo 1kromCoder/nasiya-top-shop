@@ -135,7 +135,7 @@ export class SmsService {
 
   async remove(id: number) {
     try {
-      const sms = await this.prisma.debtor.deleteMany({ where: { id } });
+      const sms = await this.prisma.debtor.findFirst({ where: { id } });
       if (!sms) {
         return { message: 'Debtor not found' };
       }
