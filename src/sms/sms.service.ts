@@ -23,8 +23,6 @@ export class SmsService {
       if (!debtor) {
         return { message: 'Debtor not found' };
       }
-    
-
 
       const post = await this.prisma.sms.create({
         data: {
@@ -33,7 +31,6 @@ export class SmsService {
           debtor: {
             connect: { id: debtorId },
           },
-
         },
       });
       return post;
@@ -118,7 +115,6 @@ export class SmsService {
         throw new NotFoundException(`Debtor not found`);
       }
 
-
       const updatedDebt = await this.prisma.sms.update({
         where: { id },
         data: {
@@ -127,7 +123,6 @@ export class SmsService {
           debtor: {
             connect: { id: debtorId },
           },
-
         },
       });
 
@@ -140,11 +135,12 @@ export class SmsService {
 
   async remove(id: number) {
     try {
-      const sms = await this.prisma.sms.findFirst({ where: { id } });
+      const sms = await this.prisma.debtor.deleteMany({ where: { id } });
       if (!sms) {
-        return { message: 'Sms not found' };
+        return { message: 'Debtor not found' };
       }
-      const del = await this.prisma.sms.delete({ where: { id } });
+
+      const del = await this.prisma.sms.deleteMany({ where: { debtorId: id } });
       return del;
     } catch (error) {
       throw new Error(error);
