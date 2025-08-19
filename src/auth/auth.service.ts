@@ -1,13 +1,11 @@
 import {
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from './dto/login-auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -79,4 +77,5 @@ export class AuthService {
 
     throw new UnauthorizedException('Noto‘g‘ri foydalanuvchi turi!');
   }
+
 }

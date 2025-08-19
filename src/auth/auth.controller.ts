@@ -2,7 +2,7 @@ import { Controller, Post, Body, UseGuards, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-auth.dto';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
-import { Request } from 'express';
+
 
 @Controller('auth')
 export class AuthController {
@@ -18,4 +18,5 @@ export class AuthController {
   async getMe(@Req() req: any) {
     return this.authService.getMe(req.user);
   }
+  
 }
