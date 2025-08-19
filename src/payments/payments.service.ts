@@ -11,99 +11,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class PaymentsService {
   constructor(private readonly prisma: PrismaService) {}
-  // async create(data: CreatePaymentDto) {
-  //   try {
-  //     const { endDate, debtsId, amount, month, ...rest } = data;
-
-  //     const debt = await this.prisma.debts.findUnique({
-  //       where: { id: debtsId },
-  //     });
-
-  //     if (!debt) throw new NotFoundException('Debt not found');
-
-  //     const monthlyAmount = Math.floor(debt.amount / debt.period);
-
-  //     const paidPayments = await this.prisma.payments.findMany({
-  //       where: { debtsId },
-  //     });
-
-  //     const totalPaid = paidPayments.reduce((acc, p) => acc + p.amount, 0);
-  //     const paidMonths = paidPayments.reduce(
-  //       (acc, p) => acc + (p.month || 0),
-  //       0,
-  //     );
-
-  //     const remainingAmount = debt.amount - totalPaid;
-  //     const remainingMonths = debt.period - paidMonths;
-
-  //     if (remainingAmount <= 0 || remainingMonths <= 0) {
-  //       throw new BadRequestException('Qarz allaqachon to‘liq to‘langan');
-  //     }
-
-  //     if (amount > remainingAmount) {
-  //       throw new BadRequestException(
-  //         `Your amount exceeds remaining debt. Max allowed: ${remainingAmount}`,
-  //       );
-  //     }
-
-  //     let paymentMonths: number;
-  //     let realAmount = amount
-
-  //     if (month !== undefined) {
-  //       const expected = month * monthlyAmount;
-  //       realAmount = expected
-  //       // if (amount !== expected) {
-  //       //   throw new BadRequestException(
-  //       //     `To pay for ${month} month(s), amount must be exactly ${expected}`,
-  //       //   );
-  //       // }
-
-  //       if (month > remainingMonths) {
-  //         throw new BadRequestException(
-  //           `You can only pay for ${remainingMonths} more month(s)`,
-  //         );
-  //       }
-
-  //       paymentMonths = month;
-  //     } else {
-  //       const newTotalPaid = totalPaid + amount;
-  //       const newTotalMonths = Math.floor(newTotalPaid / monthlyAmount);
-  //       paymentMonths = newTotalMonths - paidMonths;
-
-  //       if (paymentMonths > remainingMonths) {
-  //         throw new BadRequestException(
-  //           `You can only pay for ${remainingMonths} more month(s)`,
-  //         );
-  //       }
-
-  //       if (paymentMonths < 0) paymentMonths = 0;
-  //     }
-
-  //     const newPayment = await this.prisma.payments.create({
-  //       data: {
-  //         ...rest,
-  //         amount: realAmount,
-  //         month: paymentMonths,
-  //         endDate: new Date(endDate),
-  //         isActive: true,
-  //         debts: {
-  //           connect: { id: debtsId },
-  //         },
-  //       },
-  //     });
-
-  //     return {
-  //       message:
-  //         paymentMonths > 0
-  //           ? `${paymentMonths} oy uchun to'lov qabul qilindi`
-  //           : `To'lov qabul qilindi, lekin hali 1 oylik yopilmadi (yig'ilmoqda)`,
-  //       payment: newPayment,
-  //     };
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw new BadRequestException(error.message || error);
-  //   }
-  // }
 
   async create(data: CreatePaymentDto) {
     try {
@@ -188,6 +95,18 @@ export class PaymentsService {
           isActive: true,
           debts: {
             connect: { id: debtsId },
+          },
+        },
+      });
+
+      await this.prisma.debts.update({
+        where: { id: debtsId },
+        data: {
+          period: {
+            decrement: paymentMonths,
+          },
+          amount: {
+            decrement: paymentAmount,
           },
         },
       });
