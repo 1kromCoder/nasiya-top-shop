@@ -135,7 +135,6 @@ export class DebtorService {
 
         const monthlyAmount = Math.floor(debt.amount / debt.period);
 
-        // Keyingi to'lovni topish
         const nextPay = debt.Payments.find((p) => p.isActive);
 
         return {
@@ -206,4 +205,5 @@ export class DebtorService {
       throw new UnauthorizedException(error);
     }
   }
+ 
 }

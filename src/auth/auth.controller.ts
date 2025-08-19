@@ -3,10 +3,11 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-auth.dto';
 import { JwtAuthGuard } from 'src/guard/jwt.guard';
 
-
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('login')
   login(@Body() loginUserDto: LoginDto) {
@@ -18,5 +19,5 @@ export class AuthController {
   async getMe(@Req() req: any) {
     return this.authService.getMe(req.user);
   }
-  
+
 }
