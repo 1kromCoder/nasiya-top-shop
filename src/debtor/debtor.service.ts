@@ -118,13 +118,7 @@ export class DebtorService {
         return { message: 'Debtor not found' };
       }
 
-      const totalDebt = one.Debts.reduce((acc, debt) => {
-        const activePaymentsSum = debt.Payments.reduce(
-          (acc, pay) => acc + pay.amount,
-          0,
-        );
-        return acc + (debt.amount - activePaymentsSum);
-      }, 0);
+      const totalDebt = one.Debts.reduce((acc, debt) => acc + debt.amount, 0);
       const totalPayment = one.Debts.reduce((acc, debt) => {
         const activePaymentsSum = debt.Payments.reduce(
           (acc, pay) => acc + pay.amount,

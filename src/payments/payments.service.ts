@@ -19,6 +19,7 @@ export class PaymentsService {
       const debt = await this.prisma.debts.findUnique({
         where: { id: debtsId },
       });
+      console.log(debt);
       if (!debt) throw new NotFoundException('Debt not found');
       if (amount) {
         if (debt.amount < amount) {
@@ -34,14 +35,9 @@ export class PaymentsService {
         where: { debtsId },
       });
 
-      const totalPaid = paidPayments.reduce((acc, p) => acc + p.amount, 0);
-      const paidMonths = paidPayments.reduce(
-        (acc, p) => acc + (p.month || 0),
-        0,
-      );
-
-      const remainingAmount = debt.amount - totalPaid;
-      const remainingMonths = debt.period - paidMonths;
+      const remainingAmount = debt.amount;
+      const remainingMonths = debt.period
+      
 
       if (remainingAmount <= 0) {
         throw new BadRequestException('Qarz allaqachon to‘liq to‘langan');
