@@ -189,87 +189,6 @@ export class DebtsService {
     }
   }
 
-  // async findOne(id: number) {
-
-  // async findOne(id: number) {
-  //   try {
-  //     const one = await this.prisma.debts.findFirst({
-  //       where: { id },
-  //       include: {
-  //         ImageDebts: true,
-  //         Payments: true,
-  //         debtor: {
-  //           include: {
-  //             Seller: true,
-  //             Imgs: true,
-  //             Debts: {
-  //               include: {
-  //                 Payments: true,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-
-  //     if (!one) {
-  //       return { message: 'Debt not found' };
-  //     }
-  //     if (!one.debtor) {
-  //       return {
-  //         ...one,
-  //         totalDebt: 0,
-  //         totalPayment: 0,
-  //       };
-  //     }
-  //     const monthlyAmount =
-  //       one.period > 0 ? Math.floor(one.amount / one.period) : one.amount;
-
-  //     // debtor ichidagi barcha qarzlar bo‘yicha umumiy hisob
-  //     const totalDebt = one.debtor.Debts.reduce((acc, debt) => {
-  //       const activePaymentsSum = debt.Payments.reduce(
-  //         (acc, pay) => acc + pay.amount,
-  //         0,
-  //       );
-  //       return acc + (debt.amount - activePaymentsSum);
-  //     }, 0);
-
-  //     const totalPayment = one.debtor.Debts.reduce((acc, debt) => {
-  //       const activePaymentsSum = debt.Payments.reduce(
-  //         (acc, pay) => acc + pay.amount,
-  //         0,
-  //       );
-  //       return acc + activePaymentsSum;
-  //     }, 0);
-  //     const enrichedDebt = one.debtor.Debts.map((debt) => {
-  //       const activePaymentsSum = debt.Payments.reduce(
-  //         (acc, pay) => acc - pay.amount,
-  //         debt.amount,
-  //       );
-  //       return {
-  //         ...debt,
-  //         activePaymentsSum,
-  //       };
-  //     });
-
-  //     const mainDebtActivePaymentsSum = one.Payments.reduce(
-  //       (acc, pay) => acc - pay.amount,
-  //       one.amount,
-  //     );
-  //     return {
-  //       ...one,
-  //       debtor: {
-  //         ...one.debtor,
-  //         Debts: enrichedDebt,
-  //       },
-  //       totalDebt,
-  //       activePaymentsSum: mainDebtActivePaymentsSum,
-  //       totalPayment,
-  //     };
-  //   } catch (error) {
-  //     throw new BadRequestException(error);
-  //   }
-  // }
 
   async findOne(id: number) {
     try {
@@ -304,11 +223,9 @@ export class DebtsService {
         };
       }
 
-      // 1 oylik to'lov miqdori
       const monthlyAmount =
         one.period > 0 ? Math.floor(one.amount / one.period) : one.amount;
 
-      // debtor ichidagi barcha qarzlar bo‘yicha umumiy hisob
       const totalDebt = one.debtor.Debts.reduce((acc, debt) => {
         const activePaymentsSum = debt.Payments.reduce(
           (acc, pay) => acc + pay.amount,
@@ -353,7 +270,7 @@ export class DebtsService {
         totalDebt,
         activePaymentsSum: mainDebtActivePaymentsSum,
         totalPayment,
-        monthlyAmount, // asosiy qarz uchun
+        monthlyAmount, 
       };
     } catch (error) {
       throw new BadRequestException(error);

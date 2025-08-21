@@ -30,14 +30,12 @@ export class PaymentsService {
       }
       const monthlyAmount = Math.floor(debt.amount / debt.period);
 
-      // Qolgan qarz va to‘langan miqdorni topamiz
       const paidPayments = await this.prisma.payments.findMany({
         where: { debtsId },
       });
 
       const remainingAmount = debt.amount;
-      const remainingMonths = debt.period
-      
+      const remainingMonths = debt.period;
 
       if (remainingAmount <= 0) {
         throw new BadRequestException('Qarz allaqachon to‘liq to‘langan');
@@ -46,17 +44,13 @@ export class PaymentsService {
       let paymentAmount = 0;
       let paymentMonths = 0;
 
-      // ✅ Usul 1: month = 1
       if (month === 1 && !amount && !months) {
         if (remainingMonths < 1) {
           throw new BadRequestException('1 oylik to‘lash imkoniyati yo‘q');
         }
         paymentAmount = monthlyAmount;
         paymentMonths = 1;
-      }
-
-      // ✅ Usul 2: amount berilgan
-      else if (amount && !months && !month) {
+      } else if (amount && !months && !month) {
         if (amount > remainingAmount) {
           throw new BadRequestException(
             `Kiritilgan summa qarzdan oshib ketdi. Maksimal: ${remainingAmount}`,
@@ -66,7 +60,6 @@ export class PaymentsService {
         paymentMonths = Math.floor(amount / monthlyAmount);
       }
 
-      // ✅ Usul 3: months[] berilgan
       else if (Array.isArray(months) && months.length > 0) {
         const totalForMonths = months.length * monthlyAmount;
         if (totalForMonths > remainingAmount) {
